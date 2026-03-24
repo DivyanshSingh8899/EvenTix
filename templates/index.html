@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - EventTix{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-light">
+    <div class="container relative z-10">
+        <h1 class="hero-title animate-fade-in">Discover Your Next Experience</h1>
+        <p class="lead mb-4 text-muted animate-fade-in" style="animation-delay: 0.2s;">
+            Book tickets to the best events, concerts, and workshops with ease.
+        </p>
+        <div class="animate-fade-in" style="animation-delay: 0.4s;">
+            <a href="{{ url_for('events') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold">
+                <i class="fa-solid fa-magnifying-glass me-2"></i> Browse Events
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Events Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Upcoming Highlights</h2>
+            <a href="{{ url_for('events') }}" class="btn btn-outline-light text-primary">View All</a>
+        </div>
+        
+        <div class="row g-4">
+            {% if events %}
+                {% for event in events %}
+                <div class="col-md-4">
+                    <div class="card h-100 glass-card text-light border-0">
+                        <div class="card-img-top-placeholder">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-truncate">{{ event.title }}</h5>
+                            <p class="card-text text-muted mb-2 small">
+                                <i class="fa-solid fa-location-dot me-1"></i> {{ event.location }}
+                            </p>
+                            <p class="card-text text-muted mb-3 small">
+                                <i class="fa-regular fa-clock me-1"></i> {{ event.date_time.strftime('%b %d, %Y - %I:%M %p') }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top" style="border-color: var(--glass-border) !important;">
+                                <span class="fw-bold fs-5 text-primary">${{ "%.2f"|format(event.ticket_price) }}</span>
+                                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-sm btn-outline-primary rounded-pill">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 py-5 text-center">
+                    <div class="glass-card p-5">
+                        <i class="fa-solid fa-calendar-xmark fa-3x text-muted mb-3"></i>
+                        <h4 class="text-light">No events coming up</h4>
+                        <p class="text-muted">Check back later for exciting new events.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

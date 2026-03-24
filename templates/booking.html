@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Book Tickets - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {% if booking %}
+                <!-- Booking Confirmation View -->
+                <div class="glass-card p-5 animate-fade-in text-center">
+                    <div class="text-success mb-4">
+                        <i class="fa-solid fa-circle-check fa-4x"></i>
+                    </div>
+                    <h2 class="fw-bold text-light mb-3">Booking Confirmed!</h2>
+                    <p class="text-muted mb-4">Thank you for your purchase. Your tickets have been secured.</p>
+                    
+                    <div class="bg-dark p-4 rounded-3 mb-4 mx-auto" style="max-width: 300px;">
+                        <img src="{{ url_for('qr_code', booking_reference=booking.booking_reference) }}" alt="QR Code" class="img-fluid rounded">
+                        <p class="text-muted mt-3 small mb-0">Scan to verify entry</p>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-2 text-start bg-dark p-4 rounded-3 text-light">
+                        <div class="d-flex justify-content-between border-bottom pb-2 border-secondary">
+                            <span class="text-muted">Booking Reference:</span>
+                            <span class="fw-bold">{{ booking.booking_reference }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2 border-secondary">
+                            <span class="text-muted">Event:</span>
+                            <span class="fw-bold">{{ event.title }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2 border-secondary">
+                            <span class="text-muted">Tickets:</span>
+                            <span class="fw-bold">{{ booking.num_tickets }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total Paid:</span>
+                            <span class="fw-bold text-primary">${{ "%.2f"|format(booking.total_price) }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('events') }}" class="btn btn-outline-primary rounded-pill px-4">Browse More Events</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Booking Form View -->
+                <div class="glass-card p-5 animate-fade-in text-light">
+                    <div class="d-flex align-items-center mb-4 pb-4 border-bottom" style="border-color: var(--glass-border) !important;">
+                        <div class="bg-dark rounded d-flex align-items-center justify-content-center me-4" style="width: 80px; height: 80px;">
+                            <i class="fa-solid fa-ticket fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">Complete Your Booking</h3>
+                            <p class="text-muted mb-0">{{ event.title }}</p>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('book_ticket', event_id=event.id) }}">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Price per ticket</label>
+                                <div class="fs-4 fw-bold text-primary">${{ "%.2f"|format(event.ticket_price) }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="num_tickets" class="form-label text-muted">Number of Tickets</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="num_tickets" name="num_tickets" onchange="updateTotal()">
+                                    {% for i in range(1, event.available_tickets + 1) %}
+                                        {% if i <= 10 %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-dark p-4 rounded-3 mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 text-muted">Total Amount</span>
+                                <span class="fs-3 fw-bold text-primary" id="total_price">${{ "%.2f"|format(event.ticket_price) }}</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold fs-5 shadow">
+                            Confirm & Pay <i class="fa-solid fa-lock ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <script>
+                    function updateTotal() {
+                        const price = {{ event.ticket_price }};
+                        const quantity = document.getElementById('num_tickets').value;
+                        const total = (price * quantity).toFixed(2);
+                        document.getElementById('total_price').innerText = '$' + total;
+                    }
+                </script>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
