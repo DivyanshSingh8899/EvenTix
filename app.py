@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-import qrcode
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file  # type: ignore
+from flask_sqlalchemy import SQLAlchemy  # type: ignore
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user  # type: ignore
+from werkzeug.security import generate_password_hash, check_password_hash  # type: ignore
+import qrcode  # type: ignore
 from datetime import datetime, timezone
 import uuid
 import io
