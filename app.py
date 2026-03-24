@@ -12,8 +12,13 @@ app = Flask(__name__)
 # Secure secret key
 app.config['SECRET_KEY'] = 'event-booking-secret-key-123'
 # Configure SQLite DB
-basedir = os.path.abspath(os.path.dirname(__name__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# On Vercel (serverless), the filesystem is read-only, so we use /tmp for the SQLite db
+if os.environ.get('VERCEL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/database.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -275,9 +280,10 @@ def admin_edit_event(event_id):
     flash('Event updated successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
 
+# Create database tables globally so Vercel Serverless triggers it
+with app.app_context():
+    db.create_all()
+
 # Application initialization
 if __name__ == '__main__':
-    with app.app_context():
-        # Create database tables if they don't exist
-        db.create_all()
     app.run(debug=True)
