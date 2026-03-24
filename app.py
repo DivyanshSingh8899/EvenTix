@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import qrcode
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import io
 import os
@@ -53,7 +53,7 @@ class Booking(db.Model):
     num_tickets = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     booking_reference = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
-    booking_date = db.Column(db.DateTime, default=datetime.utcnow)
+    booking_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -282,7 +282,10 @@ def admin_edit_event(event_id):
 
 # Create database tables globally so Vercel Serverless triggers it
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"Error initializing DB: {e}")
 
 # Application initialization
 if __name__ == '__main__':
