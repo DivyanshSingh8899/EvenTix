@@ -8,8 +8,7 @@ A web-based Event Registration & Ticket Booking System that allows users to brow
 
 You can access the live website here:
 
-👉 Website Link:
-[](https://eventix-v1.vercel.app/)
+👉 Website Link:[EvenTix](https://eventix-v1.vercel.app/)
 
 
 ---
