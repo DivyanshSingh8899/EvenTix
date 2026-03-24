@@ -35,6 +35,13 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     bookings = db.relationship('Booking', backref='user', lazy=True)
 
+    def __init__(self, username=None, email=None, password=None, is_admin=False, **kwargs):
+        super().__init__(**kwargs)
+        if username: self.username = username
+        if email: self.email = email
+        if password: self.password = password
+        self.is_admin = is_admin
+
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -46,6 +53,16 @@ class Event(db.Model):
     ticket_price = db.Column(db.Float, nullable=False)
     bookings = db.relationship('Booking', backref='event', lazy='dynamic', cascade="all, delete-orphan")
 
+    def __init__(self, title=None, description=None, date_time=None, location=None, total_tickets=None, available_tickets=None, ticket_price=None, **kwargs):
+        super().__init__(**kwargs)
+        if title: self.title = title
+        if description: self.description = description
+        if date_time: self.date_time = date_time
+        if location: self.location = location
+        if total_tickets is not None: self.total_tickets = total_tickets
+        if available_tickets is not None: self.available_tickets = available_tickets
+        if ticket_price is not None: self.ticket_price = ticket_price
+
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -54,6 +71,13 @@ class Booking(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     booking_reference = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     booking_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+    def __init__(self, user_id=None, event_id=None, num_tickets=None, total_price=None, **kwargs):
+        super().__init__(**kwargs)
+        if user_id is not None: self.user_id = user_id
+        if event_id is not None: self.event_id = event_id
+        if num_tickets is not None: self.num_tickets = num_tickets
+        if total_price is not None: self.total_price = total_price
 
 @login_manager.user_loader
 def load_user(user_id):
