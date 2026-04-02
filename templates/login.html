@@ -15,7 +15,7 @@
                     <p class="text-muted">Sign in to manage your bookings</p>
                 </div>
                 
-                <form method="POST" action="{{ url_for('login', next=request.args.get('next', '')) }}">
+                <form method="POST" action="{{ url_for('login', next=request.args.get('next', '')) }}" id="loginForm">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                         <label for="username" class="text-muted">Username</label>
@@ -27,7 +27,22 @@
                     <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold mb-3">
                         Sign In <i class="fa-solid fa-arrow-right ms-2"></i>
                     </button>
-                    <div class="text-center">
+                    
+                    <!-- Quick Login Demo Section -->
+                    <div class="border-top border-secondary pt-3 mt-3">
+                        <p class="text-muted small mb-3 text-center">
+                            <i class="fa-solid fa-star text-warning me-1"></i> Demo Admin Account
+                        </p>
+                        <div class="bg-dark rounded p-3 mb-3">
+                            <p class="text-muted small mb-1"><strong>Username:</strong> <code class="text-info">admin</code></p>
+                            <p class="text-muted small mb-0"><strong>Password:</strong> <code class="text-info">admin123</code></p>
+                        </div>
+                        <button type="button" class="btn btn-outline-warning w-100 py-2 rounded-pill fw-bold" onclick="autofillCredentials()">
+                            <i class="fa-solid fa-bolt me-2"></i>Quick Admin Login
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
                         <p class="text-muted mb-0">Don't have an account? <a href="{{ url_for('register') }}" class="text-primary text-decoration-none">Sign up</a></p>
                     </div>
                 </form>
@@ -35,4 +50,12 @@
         </div>
     </div>
 </div>
+
+<script>
+function autofillCredentials() {
+    document.getElementById('username').value = 'admin';
+    document.getElementById('password').value = 'admin123';
+    document.getElementById('username').focus();
+}
+</script>
 {% endblock %}

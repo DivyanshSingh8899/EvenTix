@@ -308,6 +308,19 @@ def admin_edit_event(event_id):
 with app.app_context():
     try:
         db.create_all()
+        
+        # Create default admin user if it doesn't exist
+        admin_user = User.query.filter_by(username='admin').first()
+        if not admin_user:
+            default_admin = User(
+                username='admin',
+                email='admin@eventix.com',
+                password=generate_password_hash('admin123'),
+                is_admin=True
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            print("✓ Default admin user created: username='admin', password='admin123'")
     except Exception as e:
         print(f"Error initializing DB: {e}")
 
