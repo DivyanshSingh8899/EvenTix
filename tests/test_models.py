@@ -176,8 +176,7 @@ class TestBookingModel:
         db.session.add(booking1)
         db.session.commit()
         
-        # Check that booking_reference is a UUID string
-        assert len(booking1.booking_reference) == 36  # UUID format
+        assert len(booking1.booking_reference) == 36  
         assert booking1.booking_reference is not None
     
     def test_booking_relationships(self, app_context, init_database):
