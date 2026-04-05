@@ -1,7 +1,31 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+# Virtual environment folders
 venv/
 venv2/
-__pycache__/
-*.pyc
+.venv/
+env/
+# Flask / SQLite database
 *.db
 instance/
+# Test coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+# Environment variable files (passwords etc.)
 .env
+.env.local
+# IDE / Editor folders
+.vscode/
+.idea/
+*.sublime-project
+# OS junk files
+.DS_Store
+Thumbs.db
+# pytest cache
+.pytest_cache/
+.cache/
