@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 class TestUserModel:
     """Test User model"""
-    
+    @pytest.mark.models
     def test_user_creation(self, app_context):
         """Test creating a user"""
         user = User(
@@ -26,7 +26,7 @@ class TestUserModel:
         assert user.email == 'john@example.com'
         assert user.is_admin is False
         assert check_password_hash(user.password, 'password123')
-    
+    @pytest.mark.models
     def test_user_password_hashing(self, app_context):
         """Test password is properly hashed"""
         password = 'my_secure_password'
@@ -40,7 +40,7 @@ class TestUserModel:
         
         assert check_password_hash(user.password, password)
         assert user.password != password  # Password should be hashed
-    
+    @pytest.mark.models
     def test_user_unique_username(self, app_context):
         """Test username must be unique"""
         user1 = User(
@@ -60,7 +60,7 @@ class TestUserModel:
         
         with pytest.raises(Exception):  # IntegrityError
             db.session.commit()
-    
+    @pytest.mark.models
     def test_user_unique_email(self, app_context):
         """Test email must be unique"""
         user1 = User(
@@ -84,7 +84,7 @@ class TestUserModel:
 
 class TestEventModel:
     """Test Event model"""
-    
+    @pytest.mark.models
     def test_event_creation(self, app_context):
         """Test creating an event"""
         event = Event(
@@ -103,7 +103,7 @@ class TestEventModel:
         assert event.title == 'Web Summit 2026'
         assert event.available_tickets == 500
         assert event.ticket_price == 150.00
-    
+    @pytest.mark.models
     def test_event_ticket_availability(self, app_context):
         """Test ticket availability calculation"""
         event = Event(
@@ -124,7 +124,7 @@ class TestEventModel:
         
         assert event.available_tickets == 70
         assert event.total_tickets == 100
-    
+    @pytest.mark.models
     def test_event_sold_out(self, app_context):
         """Test sold out event"""
         event = Event(
@@ -144,7 +144,7 @@ class TestEventModel:
 
 class TestBookingModel:
     """Test Booking model"""
-    
+    @pytest.mark.models
     def test_booking_creation(self, app_context, init_database):
         """Test creating a booking"""
         data = init_database
@@ -162,7 +162,7 @@ class TestBookingModel:
         assert booking.num_tickets == 5
         assert booking.total_price == 499.95
         assert booking.booking_reference is not None
-    
+    @pytest.mark.models
     def test_booking_reference_unique(self, app_context, init_database):
         """Test booking reference is unique"""
         data = init_database
@@ -178,7 +178,7 @@ class TestBookingModel:
         
         assert len(booking1.booking_reference) == 36  
         assert booking1.booking_reference is not None
-    
+    @pytest.mark.models
     def test_booking_relationships(self, app_context, init_database):
         """Test booking relationships with user and event"""
         data = init_database
