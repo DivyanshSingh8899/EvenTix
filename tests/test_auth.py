@@ -9,12 +9,13 @@ class TestAuthenticationRoutes:
     """Test authentication routes"""
 
     # Basic route tests
+    @pytest.mark.auth
     def test_register_page_accessible(self, client):
         """Test register page loads successfully"""
         response = client.get('/register')
         assert response.status_code == 200
         assert b'Sign up' in response.data or b'register' in response.data
-
+    @pytest.mark.auth
     def test_register_new_user_success(self, client, app_context):
         """Test successful user registration"""
         response = client.post('/register', data={
@@ -26,7 +27,7 @@ class TestAuthenticationRoutes:
         assert response.status_code == 200
         # After successful registration, should redirect to login or show success message
         assert b'login' in response.data.lower() or b'successful' in response.data.lower()
-
+    @pytest.mark.auth
     def test_register_duplicate_username(self, client, init_database):
         """Test registration with duplicate username"""
         response = client.post('/register', data={
@@ -37,7 +38,7 @@ class TestAuthenticationRoutes:
 
         assert response.status_code == 200
         assert b'exists' in response.data.lower() or b'already' in response.data.lower()
-
+    @pytest.mark.auth
     def test_register_duplicate_email(self, client, init_database):
         """Test registration with duplicate email"""
         response = client.post('/register', data={
@@ -48,7 +49,7 @@ class TestAuthenticationRoutes:
 
         assert response.status_code == 200
         assert b'email' in response.data.lower() or b'registered' in response.data.lower()
-
+    @pytest.mark.auth
     def test_login_page_accessible(self, client):
         """Test login page loads"""
         response = client.get('/login')
@@ -56,6 +57,7 @@ class TestAuthenticationRoutes:
         assert b'Welcome Back' in response.data or b'Login' in response.data
 
     # Login tests
+    @pytest.mark.auth
     def test_login_success(self, client, init_database):
         """Test successful login"""
         response = client.post('/login', data={
@@ -66,7 +68,7 @@ class TestAuthenticationRoutes:
         assert response.status_code == 200
         # Should redirect to admin or home page
         assert b'Logout' in response.data or b'Welcome' in response.data
-
+    @pytest.mark.auth
     def test_login_wrong_password(self, client, init_database):
         """Test login with wrong password"""
         response = client.post('/login', data={
@@ -76,7 +78,7 @@ class TestAuthenticationRoutes:
 
         assert response.status_code == 200
         assert b'unsuccessful' in response.data.lower() or b'check' in response.data.lower()
-
+    @pytest.mark.auth
     def test_login_nonexistent_user(self, client, init_database):
         """Test login with non-existent username"""
         response = client.post('/login', data={
@@ -86,7 +88,7 @@ class TestAuthenticationRoutes:
 
         assert response.status_code == 200
         assert b'unsuccessful' in response.data.lower() or b'check' in response.data.lower()
-
+    @pytest.mark.auth
     def test_admin_login(self, client, init_database):
         """Test admin user login"""
         response = client.post('/login', data={
@@ -99,6 +101,7 @@ class TestAuthenticationRoutes:
         # TODO: Add assertion for admin dashboard elements
 
     # Logout and session tests
+    @pytest.mark.auth
     def test_logout(self, client, init_database):
         """Test logout functionality"""
         # First login
@@ -112,7 +115,7 @@ class TestAuthenticationRoutes:
 
         assert response.status_code == 200
         # Should be redirected to home or show logged out message
-
+    @pytest.mark.auth
     def test_authenticated_user_cannot_access_register(self, client, init_database):
         """Test authenticated user is redirected from register page"""
         client.post('/login', data={
@@ -123,7 +126,7 @@ class TestAuthenticationRoutes:
         response = client.get('/register', follow_redirects=True)
 
         assert response.status_code == 200
-
+    @pytest.mark.auth
     def test_authenticated_user_cannot_access_login(self, client, init_database):
         """Test authenticated user is redirected from login page"""
         client.post('/login', data={

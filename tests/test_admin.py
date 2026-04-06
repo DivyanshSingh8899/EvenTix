@@ -8,12 +8,12 @@ from datetime import datetime
 
 class TestAdminRoutes:
     """Test admin-only routes"""
-    
+    @pytest.mark.admin
     def test_admin_dashboard_requires_login(self, client):
         """Test admin dashboard requires authentication"""
         response = client.get('/admin')
         assert response.status_code == 302  # Redirect to login
-    
+    @pytest.mark.admin
     def test_admin_dashboard_requires_admin_privilege(self, client, init_database):
         """Test admin dashboard requires admin privilege"""
         # Login as regular user
@@ -26,7 +26,7 @@ class TestAdminRoutes:
         assert response.status_code == 200
         # Should show access denied message
         assert b'denied' in response.data.lower() or b'not authorized' in response.data.lower() or b'admin' in response.data.lower()
-    
+    @pytest.mark.admin
     def test_admin_dashboard_access_with_admin_user(self, client, init_database):
         """Test admin can access admin dashboard"""
         # Login as admin
@@ -38,7 +38,7 @@ class TestAdminRoutes:
         response = client.get('/admin')
         assert response.status_code == 200
         assert b'Admin Dashboard' in response.data or b'Manage Events' in response.data
-    
+    @pytest.mark.admin
     def test_admin_dashboard_shows_statistics(self, client, init_database):
         """Test admin dashboard displays statistics"""
         # Login as admin
@@ -55,7 +55,7 @@ class TestAdminRoutes:
 
 class TestAdminEventManagement:
     """Test admin event management"""
-    
+    @pytest.mark.admin
     def test_create_event_requires_login(self, client):
         """Test creating event requires authentication"""
         response = client.post('/admin/event/new', data={
@@ -67,7 +67,7 @@ class TestAdminEventManagement:
             'ticket_price': 50.00
         })
         assert response.status_code == 302  # Redirect
-    
+    @pytest.mark.admin
     def test_create_event_requires_admin_privilege(self, client, init_database):
         """Test only admin can create events"""
         # Login as regular user
@@ -87,7 +87,7 @@ class TestAdminEventManagement:
         
         # Should not create event
         assert response.status_code == 200
-    
+    @pytest.mark.admin
     def test_create_event_as_admin(self, client, init_database):
         """Test admin can create events"""
         # Login as admin
@@ -111,7 +111,7 @@ class TestAdminEventManagement:
         assert event is not None
         assert event.location == 'Chicago, IL'
         assert event.ticket_price == 75.00
-    
+    @pytest.mark.admin
     def test_edit_event_as_admin(self, client, init_database):
         """Test admin can edit events"""
         data = init_database
@@ -137,7 +137,7 @@ class TestAdminEventManagement:
         event = Event.query.get(event_id)
         assert event.title == 'Updated Tech Conference'
         assert event.location == 'Seattle, WA'
-    
+    @pytest.mark.admin
     def test_delete_event_as_admin(self, client, init_database):
         """Test admin can delete events"""
         data = init_database
@@ -155,7 +155,7 @@ class TestAdminEventManagement:
         # Check event was deleted
         event = Event.query.get(event_id)
         assert event is None
-    
+    @pytest.mark.admin
     def test_delete_event_cascade_deletes_bookings(self, client, init_database):
         """Test deleting event cascades to bookings"""
         data = init_database
@@ -177,7 +177,7 @@ class TestAdminEventManagement:
 
 class TestAdminDashboardDisplay:
     """Test admin dashboard information display"""
-    
+    @pytest.mark.admin
     def test_dashboard_displays_all_events(self, client, init_database):
         """Test dashboard lists all events"""
         client.post('/login', data={
@@ -189,7 +189,7 @@ class TestAdminDashboardDisplay:
         assert response.status_code == 200
         assert b'Tech Conference' in response.data
         assert b'Web Development' in response.data
-    
+    @pytest.mark.admin
     def test_dashboard_displays_all_bookings(self, client, init_database):
         """Test dashboard lists recent bookings"""
         client.post('/login', data={
